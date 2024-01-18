@@ -78,7 +78,25 @@ View(epa_http)
 ```
 2. Incluid en el documento un apartado con la descripción de los datos analizados: fuente, tipología, descripción de la información contenida (los diferentes campos) y sus valores.
 
-
+```{r}
+colnames (epa_http) <- c("IPs", "Timestamp", "Tipo", "URL", "Protocolo", "Código de respuesta", "Bytes")
+epa_http$IPs<- as.factor(epa_http$IPs)
+epa_http$Tipo <- str_replace (epa_http$Tipo, "\"", "")
+epa_http$Tipo<- as.factor(epa_http$Tipo)
+epa_http$URL<- as.factor(epa_http$URL)
+epa_http$Protocolo <- str_replace (epa_http$Protocolo, "\"", "")
+epa_http$Protocolo<- as.factor(epa_http$Protocolo)
+epa_http$`Código de respuesta` <- as.factor(epa_http$`Código de respuesta`)
+summary (epa_http)
+```
+ 
+Descripción campo IPs: IP de acceso al servidor host
+Descripción campo Timestamp: Fecha y zona horaria de la petición específica
+Descripción campo Tipo: Método invocado
+Descripción campo URL: URL solicitada
+Descripción campo Protocolo: Protocolo utilizado
+Descripción campo Código de respuesta: Resultados de código
+Descripción campo Bytes: Número de bytes transferidos
  
 ### Limpieza de los Datos
 
