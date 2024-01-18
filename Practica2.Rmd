@@ -106,6 +106,7 @@ Descripción campo Bytes: Número de bytes transferidos
 
 ```{r}
 epa_http$Timestamp <- as.POSIXct(epa_http$Timestamp, format=[%d:%H:%M:%S], tz="UTC")
+epa_http
 ```
 
 ### Exploración de Datos
