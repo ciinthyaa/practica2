@@ -8,6 +8,8 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+library(stringr)
+library(readr)
 
 ## Datos Elegantes + Análisis de Datos con Web Scrapping
 
@@ -19,7 +21,7 @@ Nuestro programa ha de ser capaz de cumplir con los siguientes pasos:
 
 1. Descargar la página web de la URL indicada, y almacenarlo en un formato de R apto para ser tratado.
 
-
+read_html
  
 2. Analizar el contenido de la web, buscando el título de la página (que en HTML se etiqueta como “title”).
 
@@ -63,8 +65,17 @@ Nuestro programa ha de ser capaz de obtener las respuestas de forma dinámica a 
 
 1. Descomprimir el fichero comprimido que contiene los registros del servidor, y a partir de los datos extraídos, cargar en data frame los registros con las peticiones servidas.
 
+Damos por hecho que el fichero comprimido está guardado en C:\temp con nombre epa_http.zip y descomprimirá el contenido en la misma carpeta c:\temp, teniendo el fichero epa-http.csv en la misma ruta.
 
+```{r}
 
+zipF<- "C:\\temp\\epa_http.zip"
+outDir<-"C:\\temp"
+unzip(zipF,exdir=outDir)
+
+epa_http <- read_table ("c:/temp/epa-http.csv", col_names = FALSE, col_types = cols(X7 = col_number()))
+View(epa_http)
+```
 2. Incluid en el documento un apartado con la descripción de los datos analizados: fuente, tipología, descripción de la información contenida (los diferentes campos) y sus valores.
 
 
