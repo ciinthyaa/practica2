@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(stringr)
 library(readr)
 library(dplyr)
+library(ggplot2)
 ```
 
 ## Datos Elegantes + Análisis de Datos con Web Scrapping
@@ -137,6 +138,11 @@ epa_http$tipo_error <- case_when(
 epa_http %>% 
   group_by(IPs, tipo_error) %>% 
   summarize(count = n_distinct(IPs))
+
+# Creamos un gráfico de barras apiladas por IP y error
+ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
+     geom_bar(stat = "count", position = "stack") +
+     labs(title = "Número de usuarios únicos por IP y tipo de error", x = "IP", y = "Usuarios", fill = "Tipo de error")
 ```
  
 ### Análisis de Datos
