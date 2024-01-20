@@ -149,10 +149,6 @@ epa_http %>%
   group_by(IPs, tipo_error) %>% 
   summarize(count = n_distinct(IPs))
 
-# Creamos un gráfico de barras de los datos por IP y error
-ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
-     geom_bar(stat = "count", position = "stack") +
-     labs(title = "Número de usuarios únicos por IP y tipo de error", x = "IP", y = "Usuarios", fill = "Tipo de error")
 ```
 Descripción error 400 (Bad Request): Es un error general que indica que tu navegador envía una solicitud al servidor del sitio web y el servidor no puede procesar o reconocer la solicitud.
 Descripción error 403 (Forbidden): No tienes permiso para ver todo o parte del sitio web por alguna razón.
@@ -198,8 +194,21 @@ ggplot(epa_http_imagenes, aes(x = Tipo)) +
 
 Estos deberán representar por lo menos 1 o 2 variables diferentes del data frame. Describid el gráfico e indicad cualquier observación destacable que se pueda apreciar gracias a la representación gráfica.
 
+# Creamos una tabla solo con la columna con los códigos de respuesta del log
+pie_frecuencias <- table(epa_http$`Código de respuesta`)
 
- 
+# Generamos un gráfico de sectores con la función pie
+pie(pie_frecuencias, labels = names(pie_frecuencias))
+
+# Se evidencia en el gráfico que más de un 75% de las peticiones son servidas correctamente por el servidor
+
+# Generamos un gráfico de barras de los datos por IP y tipos de error con la columan tipo_error que creamos en el ejercicio 4
+ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
+     geom_bar(stat = "count", position = "stack") +
+     labs(title = "Número de usuarios únicos por IP y tipo de error", x = "IP", y = "Usuarios", fill = "Tipo de error")
+
+# Se evidencia en el gráfico que hay una IP que tiene más del doble de peticiones servidas correctamente que el resto
+
 7. Generar un gráfico que permita visualizar el número de peticiones servidas a lo largo del tiempo.
 
 Como ya hicimos limpieza de datos en el punto 3 y tenemos la hora y fecha con formato Date de R podemos generar directamente el gráfico.
