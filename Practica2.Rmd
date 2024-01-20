@@ -165,7 +165,32 @@ Descripción error 501 (Not Implemented): El servidor no soporta la funcionalida
 
 5. Analizar los distintos tipos de peticiones HTTP (GET, POST, PUT, DELETE) gestionadas por el servidor, identificando la frecuencia de cada una de estas. Repetir el análisis, esta vez filtrando previamente aquellas peticiones correspondientes a recursos ofrecidos de tipo imagen.
 
+# Agrupamos por método HTTP y mostramos resumen de los datos 
+epa_http %>% 
+  group_by(Tipo) %>% 
+  summarize(Total = n())
 
+# Creamos un gráfico de barras del número de peticiones por método HTTP
+ggplot(epa_http, aes(x = Tipo)) +
+  geom_bar() +
+  labs(title = "Número de peticiones por método HTTP", x = "Método", y = "Peticiones")
+
+
+# Repetimos análisis esta vez filtrando previamente por peticiones de imágenes
+epa_http$imagen <- grepl("\\.(jpg|png|gif|bmp|svg)$", epa_http$URL, ignore.case = TRUE)
+
+# Filtramos el log para que muestre solo las filas que tienen el campo imagen que creamos a TRUE
+epa_http_imagenes <- filter(epa_http, imagen == TRUE)
+
+# Agrupamos por método HTTP y mostramos resumen de los datos filtrados por peticiones de imágenes
+epa_http_imagenes %>% 
+  group_by(Tipo) %>% 
+  summarize(Total = n())
+
+# Creamos un gráfico de barras del número de peticiones por método HTTP filtradas por peticiones de imágenes
+ggplot(epa_http_imagenes, aes(x = Tipo)) +
+  geom_bar() +
+  labs(title = "Número de peticiones por método HTTP", x = "Método", y = "Peticiones")
  
 ### Visualización de Resultados
 
