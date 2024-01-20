@@ -202,7 +202,12 @@ Estos deberán representar por lo menos 1 o 2 variables diferentes del data fram
  
 7. Generar un gráfico que permita visualizar el número de peticiones servidas a lo largo del tiempo.
 
+Como ya hicimos limpieza de datos en el punto 3 y tenemos la hora y fecha con formato Date de R podemos generar directamente el gráfico.
 
+# Generamos un gráfico de líneas con el número de peticiones por fecha y hora
+ggplot(epa_http, aes(x = Timestamp)) +
+  geom_line(stat = "count") +
+  labs(title = "Número de peticiones servidas a lo largo del tiempo", x = "Fecha y hora", y = "Peticiones")
  
 ### Clústering de datos
 
