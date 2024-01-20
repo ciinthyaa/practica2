@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(stringr)
 library(readr)
+library(dplyr)
 ```
 
 ## Datos Elegantes + Análisis de Datos con Web Scrapping
@@ -114,12 +115,28 @@ epa_http
 4. Identificar el número único de usuarios que han interactuado directamente con el servidor de forma segregada según si los usuarios han tenido algún tipo de error en las distintas peticiones ofrecidas por el servidor.
 
 ``{r}
+# Creamos una variable lógica para los errores (los códigos de respuesta 4xx y 5xx)
+epa_http$error <- grepl("^[45]", epa_http$`Código de respuesta`)
+
+# Agrupamos los datos por IP y error y mostramos resumen
+epa_http %>% 
+  group_by(IPs, error) %>% 
+  summarize(count = n_distinct(Tipo))
+
+# Pasamos a numérico el código de error para poder hacer comparaciones numérias
 epa_http$`Código de respuesta` <- as.numeric(as.character(epa_http$`Código de respuesta`))
-(epa_http$`Código de respuesta`>=400) & (epa_http$`Código de respuesta`<600)
-errores<-subset(epa_http, epa_http[,'Código de respuesta'] >= "400")
-errores$IPs<- as.factor(errores$IPs)
-errores$'Código de respuesta'<- as.factor(errores$'Código de respuesta')
-summary(errores)
+
+# Crear una variable para el tipo de error
+epa_http$tipo_error <- case_when(
+  epa_http$`Código de respuesta` >= 500 ~ "Error del servidor",
+  epa_http$`Código de respuesta` >= 400 ~ "Error del cliente",
+  TRUE ~ "Sin error"
+)
+
+# Agrupamos los datos por IP y tipo de error y mostramos resumen
+epa_http %>% 
+  group_by(IPs, tipo_error) %>% 
+  summarize(count = n_distinct(IPs))
 ```
  
 ### Análisis de Datos
