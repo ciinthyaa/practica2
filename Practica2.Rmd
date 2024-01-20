@@ -137,12 +137,12 @@ epa_http$tipo_error <- case_when(
 # Creamos una tabla con la agrupación de la respuesta según si es error del cliente, servidor o si no hay error
 tabla_frecuencias <- table(epa_http$tipo_error)
 
-# Creamos una tabla con la frecuencia de los distintos tipos de error por código
-tabla_tipos_errores <- table(epa_http$`Código de respuesta`)
+# Creamos una tabla con la frecuencia de los distintos tipos de códigos de respuesta
+tabla_tipos_respuesta <- table(epa_http$`Código de respuesta`)
 
 # Mostramos los datos de las dos tablas anteriores
 print(tabla_frecuencias)
-print(tabla_tipos_errores)
+print(tabla_tipos_respuesta)
 
 # Ahora agrupamos los datos por IP y tipo de error y mostramos resumen
 epa_http %>% 
@@ -154,7 +154,13 @@ ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
      geom_bar(stat = "count", position = "stack") +
      labs(title = "Número de usuarios únicos por IP y tipo de error", x = "IP", y = "Usuarios", fill = "Tipo de error")
 ```
- 
+Descripción error 400 (Bad Request): Es un error general que indica que tu navegador envía una solicitud al servidor del sitio web y el servidor no puede procesar o reconocer la solicitud.
+Descripción error 403 (Forbidden): No tienes permiso para ver todo o parte del sitio web por alguna razón.
+Descripción error 404 (Page Not Found): El sitio web no existe, puede que hahya sido movido o borrado.
+Descripción error 500 (Internal Server Error): Error interno del servidor.
+Descripción error 501 (Not Implemented): El servidor no soporta la funcionalidad necesaria para satisfacer la solicitud.
+
+
 ### Análisis de Datos
 
 5. Analizar los distintos tipos de peticiones HTTP (GET, POST, PUT, DELETE) gestionadas por el servidor, identificando la frecuencia de cada una de estas. Repetir el análisis, esta vez filtrando previamente aquellas peticiones correspondientes a recursos ofrecidos de tipo imagen.
