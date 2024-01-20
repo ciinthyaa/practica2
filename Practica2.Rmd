@@ -113,7 +113,14 @@ epa_http
 
 4. Identificar el número único de usuarios que han interactuado directamente con el servidor de forma segregada según si los usuarios han tenido algún tipo de error en las distintas peticiones ofrecidas por el servidor.
 
-
+``{r}
+epa_http$`Código de respuesta` <- as.numeric(as.character(epa_http$`Código de respuesta`))
+(epa_http$`Código de respuesta`>=400) & (epa_http$`Código de respuesta`<600)
+errores<-subset(epa_http, epa_http[,'Código de respuesta'] >= "400")
+errores$IPs<- as.factor(errores$IPs)
+errores$'Código de respuesta'<- as.factor(errores$'Código de respuesta')
+summary(errores)
+```
  
 ### Análisis de Datos
 
