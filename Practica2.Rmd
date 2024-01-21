@@ -9,10 +9,27 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r}
+install.packages("httr")
+install.packages("readr")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("rvest")
+install.packages("XML")
+install.packages("httr2")
+install.packages("htmlTable")
+install.packages("stringr")
+```
+
+```{r}
 library(stringr)
-library(readr)
 library(dplyr)
 library(ggplot2)
+library(readr)
+library(rvest)
+library(XML)
+library(httr)
+library(httr2)
+library(htmlTable)
 ```
 
 ## Datos Elegantes + Análisis de Datos con Web Scrapping
@@ -24,39 +41,87 @@ Queremos programar un programa de tipo web scrapping con el que podamos obtener 
 Nuestro programa ha de ser capaz de cumplir con los siguientes pasos:
 
 1. Descargar la página web de la URL indicada, y almacenarlo en un formato de R apto para ser tratado.
+```{r}
+    url <- "https://www.mediawiki.org/wiki/MediaWiki"
+    response <- GET(url)
+    writeBin(response$content, "wikipedia.html")
+```
 
-read_html
  
 2. Analizar el contenido de la web, buscando el título de la página (que en HTML se etiqueta como “title”).
 
-
- 
+```{r}
+    pxml <- htmlParse("wikipedia.html")
+    title <- xpathSApply(pxml, "//title", xmlValue)
+    cat("El título es:", title, "\n")
+```
 3. Analizar el contenido de la web, buscando todos los enlaces (que en HTML se etiquetan como “a”), buscando el texto del enlace, así como la URL.
 
+```{r}
+    enlaces <- xpathSApply(pxml,"//a", function(x) c(URL= xmlGetAttr(x, "href"), Texto = xmlValue(x)))
+    val_nulos <- sapply(enlaces, is.null)
+    enlaces[val_nulos] <- NA
+    V_lista <- unlist (enlaces)
+```
 
- 
 4. Generar una tabla con cada enlace encontrado, indicando el texto que acompaña el enlace, y el número de veces que aparece un enlace con ese mismo objetivo.
- 
 
-  
+    Se crea la tabla:
+    
+```{r}
+    tabla <- data.frame(URL = enlaces[seq(1, length(enlaces), 2)], Texto = enlaces[seq(2, length(enlaces), 2)])
+    tabla_repetidos <- table(tabla$URL)
+    tabla$conteo <- tabla_repetidos[match(tabla$URL, names(tabla_repetidos))]
+```
+    
+    Se realiza el conteo de los enlaces y se muestra la cantidad de veces que se repite cada enlace, sin agrupar:
+
+```{r}
+    tabla_repetidos <- table(tabla$URL)
+    tabla$conteo <- tabla_repetidos[match(tabla$URL, names(tabla_repetidos))]
+``` 
 5. Para cada enlace, seguirlo e indicar si está activo (podemos usar el código de status HTTP al hacer una petición a esa URL).
 
+    Se buscan las coincidencias y si no coincide se pega la URL faltante:
 
- 
+```{r fsdgd}
+asdf <- function(url) {
+  ifelse(grepl("https://", url), url, paste("https://www.mediawiki.org", url, sep = '/'))
+                      }
+``` 
+
+    Se crea la columna según sea la función:
+    
+```{r}
+    tabla$linksr <- sapply (tabla$URL, asdf)
+``` 
+  
+    Verificar el estado de cada link:
+    
+```{r}
+    tabla$estado <- sapply( tabla$linksr, function(x) {res <- GET (x)
+    Sys.sleep(2)
+      status_code (res)} )
+``` 
+
 ### Pregunta 2
 
 Elaborad, usando las librerías de gráficos base y qplot (ggplot2), una infografía sobre los datos obtenidos. Tal infografía será una reunión de gráficos donde se muestren los siguientes detalles:
 
 1. Un histograma con la frecuencia de aparición de los enlaces, pero separado por URLs absolutas (con “http…”) y URLs relativas.
 
-
+```{r}
+``` 
  
 2. Un gráfico de barras indicando la suma de enlaces que apuntan a otros dominios o servicios (distinto a https://www.mediawiki.org en el caso de ejemplo) vs. la suma de los otros enlaces.
 
-
+```{r}
+``` 
  
 3. Un gráfico de tarta (pie chart) indicando los porcentajes de Status de nuestro análisis.
 
+```{r}
+``` 
 
  
 ## Análisis de logs de servidor usando R (parte II)
