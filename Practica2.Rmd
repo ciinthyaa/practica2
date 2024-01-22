@@ -342,27 +342,36 @@ ggplot(epa_http, aes(x = Timestamp)) +
 8. Utilizando un algoritmo de aprendizaje no supervisado, realizad un análisis de clústering con k-means para los datos del servidor.
 
 ```{r}
-#Convertimos a string las IPs y las URLs porque sino dan error. 
+# Convertimos a string las IPs y las URLs porque sino dan error. 
 epa_http$`IPs` <- as.character(epa_http$`IPs`)
 epa_http$`URL` <- as.character(epa_http$`URL`)
 
-#Convertimos a factor los códigos de respuesta
+# Convertimos a factor los códigos de respuesta
 epa_http$`Código de respuesta` <- as.factor(epa_http$`Código de respuesta`)
-
-#Sustituimos los NAs por 0
-epa_http$Bytes [is.na (epa_http$Bytes)] <- 0
 
 # Convertimos las columnas factor a distintas columnas numéricas que representan el valor de la variable factor de forma que pueda usarse en algoritmos que trabajan únicamente con valores numéricos.
 epa_http_one_hot <- one_hot(as.data.table(epa_http), sparsifyNAs = TRUE)
 
-# Escalamos las variables
-datos <- scale(epa_http)
+# Añadimos nueva columna con el tamaño de la columna URL
+epa_http_one_hot <- epa_http_one_hot %>%
+  mutate(url_length = nchar(URL))
+
+# Eliminamos columnas no númericas
+epa_http_one_hot$URL <- NULL
+epa_http_one_hot$IPs <- NULL
+epa_http_one_hot$imagen <- NULL
+epa_http_one_hot$Timestamp <- NULL
+epa_http_one_hot$error <- NULL
+epa_http_one_hot$tipo_error <- NULL
+
+# Sustituimos los NAs por 0
+epa_http_one_hot$Bytes [is.na (epa_http_one_hot$Bytes)] <- 0
 
 # Aplicamos k-means con k = 2
-k2 <- kmeans(na.omit(datos), centers = 2)
+k2 <- kmeans(na.omit(epa_http_one_hot), centers = 2)
 
 # Aplicamos k-means con k = 4
-k4 <- kmeans(na.omit(datos), centers = 4)
+k4 <- kmeans(na.omit(epa_http_one_hot), centers = 4)
 ```
 
 9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
