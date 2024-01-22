@@ -320,7 +320,7 @@ ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
      geom_bar(stat = "count", position = "stack") +
      labs(title = "Número de usuarios únicos por IP y tipo de error", x = "IP", y = "Usuarios", fill = "Tipo de error")
 
-# Se evidencia en el gráfico que hay una IP que tiene más del doble de peticiones servidas correctamente que el resto
+# Se evidencia en el gráfico que hay al menos dos IPs que obtuvieron error del servidor en casi todas las peticiones que hicieron
 
 ```
 
@@ -331,7 +331,7 @@ Como ya hicimos limpieza de datos en el punto 3 y tenemos la hora y fecha con fo
 ```{r}
 # Generamos un gráfico de líneas con el número de peticiones por fecha y hora
 ggplot(epa_http, aes(x = Timestamp)) +
-  geom_line(stat = "count") +
+  geom_line(color = "red", stat = "count") +
   labs(title = "Número de peticiones servidas a lo largo del tiempo", x = "Fecha y hora", y = "Peticiones")
 ```
 
