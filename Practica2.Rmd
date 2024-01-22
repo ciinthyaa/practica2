@@ -9,19 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r}
-install.packages("httr")
-install.packages("readr")
-install.packages("dplyr")
-install.packages("ggplot2")
-install.packages("rvest")
-install.packages("XML")
-install.packages("httr2")
-install.packages("htmlTable")
-install.packages("stringr")
-install.packages("patchwork")
-```
 
-```{r}
 library(stringr)
 library(dplyr)
 library(ggplot2)
@@ -81,29 +69,31 @@ Nuestro programa ha de ser capaz de cumplir con los siguientes pasos:
 ```{r}
     tabla_repetidos <- table(tabla$URL)
     tabla$conteo <- tabla_repetidos[match(tabla$URL, names(tabla_repetidos))]
+    tabla
 ``` 
 5. Para cada enlace, seguirlo e indicar si está activo (podemos usar el código de status HTTP al hacer una petición a esa URL).
 
-    Se buscan las coincidencias y si no coincide se pega la URL faltante:
+    Primero se crea una función que busque las URLS que inicien con "https://"  y en caso de no tener esa cadena de caracteres pegue la URL del dominio:
 
 ```{r fsdgd}
-asdf <- function(url) {
-  ifelse(grepl("https://", url), url, paste("https://www.mediawiki.org", url, sep = '/'))
+burls<- function(url) {
+  ifelse(grepl("https://", url), url, paste("https://www.mediawiki.org", url, sep = ''))
                       }
 ``` 
 
-    Se crea la columna según sea la función:
+    En la tabla se crea una nueva columna que almacenará los resultados de la funcion creada anteriormente:
     
 ```{r}
-    tabla$linksr <- sapply (tabla$URL, asdf)
+    tabla$linksr <- sapply (tabla$URL, burls)
 ``` 
   
-    Verificar el estado de cada link:
+    Con las URLS completas se procede a verificar el estado de cada link:
     
 ```{r}
     tabla$estado <- sapply( tabla$linksr, function(x) {res <- GET (x)
-    Sys.sleep(2)
+    Sys.sleep(1)
       status_code (res)} )
+    tabla
 ``` 
 
 ### Pregunta 2
@@ -112,79 +102,53 @@ Elaborad, usando las librerías de gráficos base y qplot (ggplot2), una infogra
 
 1. Un histograma con la frecuencia de aparición de los enlaces, pero separado por URLs absolutas (con “http…”) y URLs relativas.
 
-  Creamos una nueva columna llamada 'Tipo' para distinguir entre URLs absolutas y relativas
+  Se crea una nueva columna llamada 'Tipo' para segun la condición clasificar entre URLs absolutas y relativas
 ```{r}
-tabla$Tipo <- ifelse(grepl("^http", tabla$URL), "URL Absoluta", "URL Relativa")
+tabla$Tipo <- ifelse(grepl("https:", tabla$URL), "URL Absoluta", "URL Relativa")
 ``` 
 
-Creamos el histograma
+Con los datos obtenidos se grafica el histograma
 
 ```{r}
-ggplot(data = tabla, aes(x = Tipo, fill = Tipo)) + geom_bar() + labs(title = "Histograma de Enlaces por Tipo", x = "Tipo de Enlace", y = "Frecuencia") + theme_minimal()
+gra1 <- ggplot(data = tabla, aes(x = Tipo, fill = Tipo)) + geom_bar() + labs(title = "Histograma de tipo de URLs", x = "Tipo de URL", y = "Frecuencia") + theme_minimal()
+gra1
 ``` 
 
 2. Un gráfico de barras indicando la suma de enlaces que apuntan a otros dominios o servicios (distinto a https://www.mediawiki.org en el caso de ejemplo) vs. la suma de los otros enlaces.
 
-Creamos una nueva columna llamada 'TipoEnlace' para guardar la diferencia entre enlaces a mediawiki y otros:
+Creamos una nueva columna llamada 'TipoEnlace2' para guardar la diferencia entre enlaces a mediawiki y otros:
 
 ```{r}
- tabla$TipoEnlace <- ifelse(
-     grepl("https://www.mediawiki.org", tabla$URL),
-     "Enlace a mediawiki",
-     "Otros Enlaces"
+tabla$TipoEnlace2 <- ifelse( grepl("https://www.mediawiki.org", tabla$linksr), "MediaWiki", "OTRA URL"
  )
 ``` 
 
 Creamos el gráfico de barras:
 
 ```{r}
- ggplot(data = tabla, aes(x = TipoEnlace, fill = TipoEnlace)) +
+gra2 <- ggplot(data = tabla, aes(x = TipoEnlace2, fill = TipoEnlace2)) +
      geom_bar() +
-     labs(title = "Enlaces a mediawiki vs. Otros Enlaces", x = "Tipo de Enlace", y = "Suma de Enlaces") + theme_minimal()
+     labs(title = "Mediawiki vs otras URLs", x = "Tipo de URL", y = "Cantidad de URLs") + theme_minimal()
+gra2
 ``` 
 3. Un gráfico de tarta (pie chart) indicando los porcentajes de Status de nuestro análisis.
 
+Se obtiene el porcentaje de cada estado y luego se grafica el pie chart
+
 ```{r}
- ggplot(data = tabla, aes(x = "", y = estado, fill = estado)) +
-    geom_bar(stat = "identity", width = 1, color = "white") +
-     coord_polar("y") +
-     labs(title = "Distribución de Estado de Análisis", fill = "estado") +
-     theme_minimal() +
-     theme(legend.position = "right")
+porc<- paste0(round(prop.table(table(tabla$estado)) * 100))
+
+gra3 <-  ggplot(data.frame(porc), aes(x="", y= porc, fill= porc))+ geom_bar(stat = "identity", width = 1) +  coord_polar(theta = "y") + geom_text(aes(label = paste0(porc, "%")), position = position_stack(vjust = 0.5))
+gra3
 ``` 
-
-Se deben guardar los 3 graficos en variables:
-
-```{r}
-Gra1 <- ggplot(data = tabla, aes(x = Tipo, fill = Tipo)) + geom_bar() + labs(title = "Histograma de Enlaces por Tipo", x = "Tipo de Enlace", y = "Frecuencia") + theme_minimal()
-```
-
-```{r}
-Gra2 <- ggplot(data = tabla, aes(x = TipoEnlace, fill = TipoEnlace)) +
-     geom_bar() +
-     labs(title = "Enlaces a mediawiki vs. Otros Enlaces", x = "Tipo de Enlace", y = "Suma de Enlaces") + theme_minimal()
-```
-
-```{r}
-Gra3 <-ggplot(data = tabla, aes(x = "", y = estado, fill = estado)) +
-    geom_bar(stat = "identity", width = 1, color = "white") +
-     coord_polar("y") +
-     labs(title = "Distribución de Estado de Análisis", fill = "estado") +
-     theme_minimal() +
-     theme(legend.position = "right")
-```
 
 Se pueden visualizar los tres graficos juntos:
 ```{r}
-Gra1 + Gra2 + Gra3
+gra1 + gra2 + gra3
 ```
 
-Otra forma puede ser, Guardar 2 graficas en una variable y luego guardar esta más el ultimo grafico en un variable total con la división de vista que queremos: 
-```{r}
-Tdgra <- Gra1 | Gra2
-tdgra1 <- Tdgra / Gra3
-tdgra1
-```
+Otra forma puede ser, guardar 2 graficas en una variable y luego guardar esta más el ultimo grafico en un variable total con la división de vista que queremos: 
+
  
 ## Análisis de logs de servidor usando R (parte II)
 
