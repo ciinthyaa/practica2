@@ -173,14 +173,31 @@ View(epa_http)
 2. Incluid en el documento un apartado con la descripción de los datos analizados: fuente, tipología, descripción de la información contenida (los diferentes campos) y sus valores.
 
 ```{r}
+# Ponemos nombres a las distintas columnas
 colnames (epa_http) <- c("IPs", "Timestamp", "Tipo", "URL", "Protocolo", "Código de respuesta", "Bytes")
+
+# Pasamos la columna IPs a tipo factor
 epa_http$IPs<- as.factor(epa_http$IPs)
+
+# Limpiamos datos de la columna Tipo quitando una doble comilla que sobra
 epa_http$Tipo <- str_replace (epa_http$Tipo, "\"", "")
+
+# Pasamos la columna Tipo a tipo factor
 epa_http$Tipo<- as.factor(epa_http$Tipo)
+
+# Pasamos la columna URL a tipo factor
 epa_http$URL<- as.factor(epa_http$URL)
+
+# Limpiamos datos de la columna Protocolo quitando una doble comilla que sobra
 epa_http$Protocolo <- str_replace (epa_http$Protocolo, "\"", "")
+
+# Pasamos la columna Protocolo a tipo factor
 epa_http$Protocolo<- as.factor(epa_http$Protocolo)
+
+# Pasamos la columna Código de respuesta a tipo factor
 epa_http$`Código de respuesta` <- as.factor(epa_http$`Código de respuesta`)
+
+# Mostramos resumen de los datos
 summary (epa_http)
 ```
  
@@ -197,8 +214,8 @@ Descripción campo Bytes: Número de bytes transferidos
 3. Aprovechando que los datos a analizar son los mismos de la primera práctica, para esta entrega es imprescindible que los datos estén en formato de “datos elegantes”.
 
 ```{r}
+# Convertimos columna en formato fecha con hora
 epa_http$Timestamp <- as.POSIXct(epa_http$Timestamp, format="[%d:%H:%M:%S]", tz="UTC")
-epa_http
 ```
 
 ### Exploración de Datos
@@ -238,7 +255,6 @@ print(tabla_tipos_respuesta)
 epa_http %>% 
   group_by(IPs, tipo_error) %>% 
   summarize(count = n_distinct(IPs))
-
 ```
 Descripción error 400 (Bad Request): Es un error general que indica que tu navegador envía una solicitud al servidor del sitio web y el servidor no puede procesar o reconocer la solicitud.
 Descripción error 403 (Forbidden): No tienes permiso para ver todo o parte del sitio web por alguna razón.
