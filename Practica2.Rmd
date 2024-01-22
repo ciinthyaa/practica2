@@ -69,7 +69,7 @@ Nuestro programa ha de ser capaz de cumplir con los siguientes pasos:
 ```{r}
     tabla_repetidos <- table(tabla$URL)
     tabla$conteo <- tabla_repetidos[match(tabla$URL, names(tabla_repetidos))]
-    tabla
+   
 ``` 
 5. Para cada enlace, seguirlo e indicar si está activo (podemos usar el código de status HTTP al hacer una petición a esa URL).
 
@@ -93,7 +93,7 @@ burls<- function(url) {
     tabla$estado <- sapply( tabla$linksr, function(x) {res <- GET (x)
     Sys.sleep(1)
       status_code (res)} )
-    tabla
+    
 ``` 
 
 ### Pregunta 2
@@ -116,7 +116,7 @@ gra1
 
 2. Un gráfico de barras indicando la suma de enlaces que apuntan a otros dominios o servicios (distinto a https://www.mediawiki.org en el caso de ejemplo) vs. la suma de los otros enlaces.
 
-Creamos una nueva columna llamada 'TipoEnlace2' para guardar la diferencia entre enlaces a mediawiki y otros:
+Creamos una nueva columna llamada 'TipoEnlace2' para almacenar la clasificacion entre enlaces a mediawiki y a otras URLs:
 
 ```{r}
 tabla$TipoEnlace2 <- ifelse( grepl("https://www.mediawiki.org", tabla$linksr), "MediaWiki", "OTRA URL"
