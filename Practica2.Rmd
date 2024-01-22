@@ -241,7 +241,7 @@ epa_http
 
 4. Identificar el número único de usuarios que han interactuado directamente con el servidor de forma segregada según si los usuarios han tenido algún tipo de error en las distintas peticiones ofrecidas por el servidor.
 
-``{r}
+```{r}
 # Creamos una variable lógica para los errores (los códigos de respuesta 4xx y 5xx)
 epa_http$error <- grepl("^[45]", epa_http$`Código de respuesta`)
 
@@ -287,6 +287,7 @@ Descripción error 501 (Not Implemented): El servidor no soporta la funcionalida
 
 5. Analizar los distintos tipos de peticiones HTTP (GET, POST, PUT, DELETE) gestionadas por el servidor, identificando la frecuencia de cada una de estas. Repetir el análisis, esta vez filtrando previamente aquellas peticiones correspondientes a recursos ofrecidos de tipo imagen.
 
+```{r}
 # Agrupamos por método HTTP y mostramos resumen de los datos 
 epa_http %>% 
   group_by(Tipo) %>% 
@@ -313,13 +314,15 @@ epa_http_imagenes %>%
 ggplot(epa_http_imagenes, aes(x = Tipo)) +
   geom_bar() +
   labs(title = "Número de peticiones por método HTTP", x = "Método", y = "Peticiones")
- 
+```
+
 ### Visualización de Resultados
 
 6. Generar al menos 2 gráficos distintos que permitan visualizar alguna característica relevante de los datos analizados.
 
 Estos deberán representar por lo menos 1 o 2 variables diferentes del data frame. Describid el gráfico e indicad cualquier observación destacable que se pueda apreciar gracias a la representación gráfica.
 
+```{r}
 # Creamos una tabla solo con la columna con los códigos de respuesta del log
 pie_frecuencias <- table(epa_http$`Código de respuesta`)
 
@@ -335,26 +338,29 @@ ggplot(epa_http, aes(x = IPs, fill = tipo_error)) +
 
 # Se evidencia en el gráfico que hay una IP que tiene más del doble de peticiones servidas correctamente que el resto
 
+```
+
 7. Generar un gráfico que permita visualizar el número de peticiones servidas a lo largo del tiempo.
 
 Como ya hicimos limpieza de datos en el punto 3 y tenemos la hora y fecha con formato Date de R podemos generar directamente el gráfico.
 
+```{r}
 # Generamos un gráfico de líneas con el número de peticiones por fecha y hora
 ggplot(epa_http, aes(x = Timestamp)) +
   geom_line(stat = "count") +
   labs(title = "Número de peticiones servidas a lo largo del tiempo", x = "Fecha y hora", y = "Peticiones")
- 
+```
+
 ### Clústering de datos
 
 8. Utilizando un algoritmo de aprendizaje no supervisado, realizad un análisis de clústering con k-means para los datos del servidor.
 
-
+```{r}
  
-9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
-
-
- 
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
+
+```{r}
+
+```
