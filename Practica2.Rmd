@@ -163,11 +163,15 @@ Damos por hecho que el fichero comprimido está guardado en C:\temp con nombre e
 
 ```{r}
 
+# Descomprimos fichero zip ubicado en la ruta C:\temp con nombre epa_http.zip
 zipF<- "C:\\temp\\epa_http.zip"
 outDir<-"C:\\temp"
 unzip(zipF,exdir=outDir)
 
-epa_http <- read_table ("c:/temp/epa-http.csv", col_names = FALSE, col_types = cols(X7 = col_number()))
+# Cargamos los datos del fichero epa-http.csv que previametne se ha descomprimido en la ruta C:/temp
+epa_http <- read_table ("C:/temp/epa-http.csv", col_names = FALSE, col_types = cols(X7 = col_number()))
+
+# Visualizamos los datos cargados
 View(epa_http)
 ```
 2. Incluid en el documento un apartado con la descripción de los datos analizados: fuente, tipología, descripción de la información contenida (los diferentes campos) y sus valores.
