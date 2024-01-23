@@ -368,14 +368,30 @@ epa_http_one_hot$tipo_error <- NULL
 epa_http_one_hot$Bytes [is.na (epa_http_one_hot$Bytes)] <- 0
 
 # Aplicamos k-means con k = 2
-k2 <- kmeans(na.omit(epa_http_one_hot), centers = 2)
+k2 <- kmeans(epa_http_one_hot, centers = 2)
+
+# Añadimos nueva columna con el tamaño de la columna URL
+epa_http_one_hot$cluster2 <- as.factor(k2$cluster)
+
+# Calculamos centroides
+temp_centroides_2 <- k2$centers
+centroides_2 <- temp_centroides_2[,(ncol(temp_centroides_2)-2):(ncol(temp_centroides_2)-1)]
 
 # Aplicamos k-means con k = 4
-k4 <- kmeans(na.omit(epa_http_one_hot), centers = 4)
+k4 <- kmeans(epa_http_one_hot, centers = 4)
+
+# Añadimos nueva columna con el tamaño de la columna URL
+epa_http_one_hot$cluster4 <- as.factor(k4$cluster)
+
+# Calculamos centroides
+temp_centroides_4 <- k4$centers
+centroides_4 <- temp_centroides_4[,(ncol(temp_centroides_4)-2):(ncol(temp_centroides_4)-1)]
 ```
 
 9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
 
 ```{r}
-
+# Generamos gráfica de k-means con k=4 para los bytes
+plot(epa_http_one_hot[,c("cluster","Bytes")], col=k4$cluster, main="K-means con K=4", xlab="Cluster", ylab="Bytes")
+points(centroides_4, col = 1:2, pch = 8, cex = 2)
 ```
