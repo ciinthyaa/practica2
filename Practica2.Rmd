@@ -387,7 +387,7 @@ centroides_4 <- temp_centroides_4[,(ncol(temp_centroides_4)-2):(ncol(temp_centro
 9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
 
 ```{r}
-# Generamos gráfico tipo scatter plot con el número de caracteres de laURL y los Bytes
+# Generamos gráfico tipo scatter plot con el número de caracteres de la URL y los Bytes
 ggplot(epa_http_one_hot, aes(x = url_length  , y = Bytes )) +
      geom_point(aes(color = as.factor(k3$cluster))) +
      geom_point(data = as.data.frame(k3$centers), aes(x = url_length , y = Bytes ), color = "black", size = 4, shape = 3) +
@@ -399,3 +399,7 @@ ggplot(epa_http_one_hot, aes(x = Tipo_GET , y = Bytes )) +
      geom_point(data = as.data.frame(k4$centers), aes(x = Tipo_GET, y = Bytes ), color = "black", size = 4, shape = 3) +
      labs(color = "Cluster")
 ```
+
+En el primer gráfico, nos aporta información de que la mayor cantidad de URLs recolectadas son de longitud corta y hacen al servidor web transferir poca cantidad de bytes. Según se aprecia en los datos recolectados, es usual que los bytes transferidos no ocupan un gran tamaño tanto en URLs cortas como en las URLS largas
+
+En el segundo gráfico, se evidencia que la mayoria de peticiones GET son las que hacen transferir al servidor una mayor cantidad de datos (bytes), y es muy poco usual que el resto de peticiones (HEAD y POST) transfieran gran cantidad de datos.
