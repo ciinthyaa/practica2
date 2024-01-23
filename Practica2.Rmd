@@ -310,7 +310,7 @@ epa_http_imagenes %>%
 # Creamos un gráfico de barras del número de peticiones por método HTTP filtradas por peticiones de imágenes
 ggplot(epa_http_imagenes, aes(x = Tipo)) +
   geom_bar(fill="lightblue") +
-  labs(title = "Número de peticiones por método HTTP", x = "Método", y = "Peticiones")
+  labs(title = "Número de peticiones de imágenes por método HTTP", x = "Método", y = "Peticiones")
 ```
 
 ### Visualización de Resultados
