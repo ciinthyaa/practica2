@@ -113,7 +113,7 @@ tabla$Tipo <- ifelse(grepl("https:", tabla$URL), "URL Absoluta", "URL Relativa")
 Con los datos obtenidos se grafica el histograma
 
 ```{r}
-gra1 <- ggplot(data = tabla, aes(x = Tipo, fill = Tipo)) + geom_bar() + labs(title = "Histograma de tipo de URLs", x = "Tipo de URL", y = "Frecuencia") + theme_minimal()
+gra1 <- ggplot(data = tabla, aes(x = Tipo, fill = Tipo)) + geom_bar() + labs(title = "Histograma de tipo de URLs", x = "Tipo de URL", y = "Frecuencia") + scale_fill_manual(values = c("URL Absoluta" = "blue", "URL Relativa" = "green")) 
 gra1
 ``` 
 
@@ -131,27 +131,39 @@ Creamos el gráfico de barras:
 ```{r}
 gra2 <- ggplot(data = tabla, aes(x = TipoEnlace2, fill = TipoEnlace2)) +
      geom_bar() +
-     labs(title = "Mediawiki vs otras URLs", x = "Tipo de URL", y = "Cantidad de URLs") + theme_minimal()
+     labs(title = "Mediawiki vs otras URLs", x = "Tipo de URL", y = "Cantidad de URLs") + scale_fill_manual(values = c("MediaWiki" = "pink", "OTRA URL" = "yellow"))
 gra2
 ``` 
+
 3. Un gráfico de tarta (pie chart) indicando los porcentajes de Status de nuestro análisis.
 
-Se obtiene el porcentaje de cada estado y luego se grafica el pie chart
+El gráfico tarta se lo resolvió de dos maneras, primero obtuvimos el porcentaje de cada valor y luego usando la función ggplot graficamos la tarta, pero la gráfica obtenida no coincide con los valores representados
 
 ```{r}
 porc<- paste0(round(prop.table(table(tabla$estado)) * 100))
 
 gra3 <-  ggplot(data.frame(porc), aes(x="", y= porc, fill= porc))+ geom_bar(stat = "identity", width = 1) +  coord_polar(theta = "y") + geom_text(aes(label = paste0(porc, "%")), position = position_stack(vjust = 0.5))
 gra3
-``` 
-
-Se pueden visualizar los tres graficos juntos:
-```{r}
-gra1 + gra2 + gra3
 ```
 
-Otra forma puede ser, guardar 2 graficas en una variable y luego guardar esta más el ultimo grafico en un variable total con la división de vista que queremos: 
+La otra solución fue a través de la función pie, en donde el gráfico es más exacto a la porción del porcentaje representado.
 
+
+```{r}
+gra4 <- pie(table(tabla$estado), labels = paste0(round(prop.table(table(tabla$estado)) * 100), "%"), col = c("yellow", "red"))
+
+title(main = "Estado de URLs", col.main = "green", font.main = 4)
+legend("topright", c("200", "404"), fill = c("yellow", "red"))
+```
+
+Se pueden visualizar los graficos juntos:
+
+```{r}
+gra1
+gra2
+gra3
+gra4
+```
  
 ## Análisis de logs de servidor usando R (parte II)
 
