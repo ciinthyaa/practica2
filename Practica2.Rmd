@@ -22,6 +22,7 @@ library(htmlTable)
 library(patchwork)
 library(mltools)
 library(data.table)
+library(car)
 ```
 
 ## Datos Elegantes + Análisis de Datos con Web Scrapping
@@ -367,21 +368,18 @@ epa_http_one_hot$tipo_error <- NULL
 # Sustituimos los NAs por 0
 epa_http_one_hot$Bytes [is.na (epa_http_one_hot$Bytes)] <- 0
 
-# Aplicamos k-means con k = 2
-k2 <- kmeans(epa_http_one_hot, centers = 2)
+# Aplicamos k-means con k = 3
+k3 <- kmeans(epa_http_one_hot, centers = 3)
 
 # Añadimos nueva columna con el tamaño de la columna URL
-epa_http_one_hot$cluster2 <- as.factor(k2$cluster)
+epa_http_one_hot$cluster3 <- as.factor(k3$cluster)
 
 # Calculamos centroides
-temp_centroides_2 <- k2$centers
-centroides_2 <- temp_centroides_2[,(ncol(temp_centroides_2)-2):(ncol(temp_centroides_2)-1)]
+temp_centroides_3 <- k2$centers
+centroides_3 <- temp_centroides_3[,(ncol(temp_centroides_3)-2):(ncol(temp_centroides_3)-1)]
 
 # Aplicamos k-means con k = 4
 k4 <- kmeans(epa_http_one_hot, centers = 4)
-
-# Añadimos nueva columna con el tamaño de la columna URL
-epa_http_one_hot$cluster4 <- as.factor(k4$cluster)
 
 # Calculamos centroides
 temp_centroides_4 <- k4$centers
@@ -391,7 +389,9 @@ centroides_4 <- temp_centroides_4[,(ncol(temp_centroides_4)-2):(ncol(temp_centro
 9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
 
 ```{r}
-# Generamos gráfica de k-means con k=4 para los bytes
-plot(epa_http_one_hot[,c("cluster","Bytes")], col=k4$cluster, main="K-means con K=4", xlab="Cluster", ylab="Bytes")
-points(centroides_4, col = 1:2, pch = 8, cex = 2)
+# Generamos gráfico tipo scatter plot con las peticiones tipo GET y los Bytes
+ggplot(epa_http_one_hot, aes(x = Tipo_GET , y = Bytes )) +
+     geom_point(aes(color = as.factor(k4$cluster))) +
+     geom_point(data = as.data.frame(k4$centers), aes(x = Tipo_GET, y = Bytes ), color = "black", size = 4, shape = 3) +
+     labs(color = "Cluster")
 ```
