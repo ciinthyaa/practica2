@@ -174,8 +174,6 @@ unzip(zipF,exdir=outDir)
 # Cargamos los datos del fichero epa-http.csv que previametne se ha descomprimido en la ruta C:/temp
 epa_http <- read_table ("C:/temp/epa-http.csv", col_names = FALSE, col_types = cols(X7 = col_number()))
 
-# Visualizamos los datos cargados
-View(epa_http)
 ```
 2. Incluid en el documento un apartado con la descripción de los datos analizados: fuente, tipología, descripción de la información contenida (los diferentes campos) y sus valores.
 
@@ -375,7 +373,7 @@ k3 <- kmeans(epa_http_one_hot, centers = 3)
 epa_http_one_hot$cluster3 <- as.factor(k3$cluster)
 
 # Calculamos centroides
-temp_centroides_3 <- k2$centers
+temp_centroides_3 <- k3$centers
 centroides_3 <- temp_centroides_3[,(ncol(temp_centroides_3)-2):(ncol(temp_centroides_3)-1)]
 
 # Aplicamos k-means con k = 4
@@ -389,6 +387,12 @@ centroides_4 <- temp_centroides_4[,(ncol(temp_centroides_4)-2):(ncol(temp_centro
 9. Representad visualmente en gráficos de tipo scatter plot el resultado de vuestros clústering y interpretad el resultado obtenido
 
 ```{r}
+# Generamos gráfico tipo scatter plot con el número de caracteres de laURL y los Bytes
+ggplot(epa_http_one_hot, aes(x = url_length  , y = Bytes )) +
+     geom_point(aes(color = as.factor(k3$cluster))) +
+     geom_point(data = as.data.frame(k3$centers), aes(x = url_length , y = Bytes ), color = "black", size = 4, shape = 3) +
+     labs(color = "Cluster")
+
 # Generamos gráfico tipo scatter plot con las peticiones tipo GET y los Bytes
 ggplot(epa_http_one_hot, aes(x = Tipo_GET , y = Bytes )) +
      geom_point(aes(color = as.factor(k4$cluster))) +
